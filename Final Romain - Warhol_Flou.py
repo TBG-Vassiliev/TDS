@@ -122,8 +122,10 @@ def main():
     
     # Enregistrer l'image sur le bureau
     desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-    cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage)
+    if not cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage):
+     raise Exception("Erreur lors de la sauvegarde de l'image sur le bureau")
     
+
     # Appliquer un flou gaussien
     montage_flou = appliquer_flou(montage)
 
@@ -138,8 +140,10 @@ def main():
     cv2.destroyAllWindows()
     
     # Enregistrer l'image floutée sur le bureau
+
     desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-    cv2.imwrite(os.path.join(desktop, 'montage_warhol_flou.png'), montage_flou)
+    if not cv2.imwrite(os.path.join(desktop, 'montage_warhol_flou.png'), montage_flou):
+     raise Exception("Erreur lors de la sauvegarde de l'image sur le bureau")
     
     
 if __name__ == "__main__":
