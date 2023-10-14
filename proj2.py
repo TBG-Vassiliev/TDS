@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 
 def capture_image_webcam():
     # Capture d'image depuis la webcam
