@@ -70,6 +70,52 @@ def appliquer_flou(image, taille_kernel=(101, 101)):
     """
     return cv2.GaussianBlur(image, taille_kernel, 0)
 
+# k est le nombre de valeurs singulières
+def appliquer_svd_flou(image, k=10):
+    """
+    Applique un flou à l'image en utilisant la décomposition en valeurs singulières (SVD).
+
+    :param image: Image à flouter.
+    :param k: Nombre de valeurs singulières à conserver.
+    :return: Image floutée.
+    """
+    # Convertir l'image en double précision, format nécessaire pour la SVD en numpy
+    img = image.astype(np.float64)
+
+    # La SVD s'applique sur des matrices 2D, nous devons donc appliquer SVD sur chaque canal de couleur séparément
+    canaux = cv2.split(img)  # Séparer les canaux de couleur
+    canaux_reconstruits = []
+    for canal in canaux:
+        # Appliquer la SVD
+        U, S_diag, VT = np.linalg.svd(canal, full_matrices=False)
+
+        # Assurez-vous que k ne dépasse pas le nombre de valeurs singulières
+        k = min(k, len(S_diag))
+
+        # Écraser S (les valeurs singulières) avec les k premières valeurs puis tout le reste à zéro
+        S_diag_k = np.zeros_like(S_diag)
+        S_diag_k[:k] = S_diag[:k]
+
+        # Convertir S en une matrice diagonale
+        S = np.diag(S_diag_k)
+
+        # Reconstruire l'image
+        canal_reconstruit = np.dot(U, np.dot(S, VT))
+        canaux_reconstruits.append(canal_reconstruit)
+
+    # Fusionner les canaux de couleur
+    img_reconstruite = cv2.merge(canaux_reconstruits)
+
+    # S'assurer que les valeurs sont dans le bon intervalle pour uint8 [0, 255]
+    img_reconstruite[img_reconstruite > 255] = 255
+    img_reconstruite[img_reconstruite < 0] = 0
+
+    # Convertir en uint8
+    img_reconstruite = img_reconstruite.astype(np.uint8)
+
+    return img_reconstruite
+
+
 def main():
     # Capture d'image
     image_couleur = capture_image_webcam()
@@ -122,15 +168,20 @@ def main():
     
     # Enregistrer l'image sur le bureau
     desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-    if not cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage):
-     raise Exception("Erreur lors de la sauvegarde de l'image sur le bureau")
+    cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage)
     
-
     # Appliquer un flou gaussien
     montage_flou = appliquer_flou(montage)
 
     # Afficher le montage flou dans une fenêtre
-    cv2.imshow('Montage Warhol Flou A Payer', montage_flou)
+    cv2.imshow('Montage Warhol Flou A Payer avec Methode Gaussienne ', montage_flou)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+    image_floue = appliquer_svd_flou(montage)  # vous pouvez ajuster k en fonction de vos besoins
+
+    # Afficher l'image floutée
+    cv2.imshow('Montage Warhol Flou A Payer avec Methode SVD', image_floue)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
@@ -140,10 +191,8 @@ def main():
     cv2.destroyAllWindows()
     
     # Enregistrer l'image floutée sur le bureau
-
-    desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-    if not cv2.imwrite(os.path.join(desktop, 'montage_warhol_flou.png'), montage_flou):
-     raise Exception("Erreur lors de la sauvegarde de l'image sur le bureau")
+    desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'H:\Desktop\Projet traitement signal') 
+    cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage)
     
     
 if __name__ == "__main__":
