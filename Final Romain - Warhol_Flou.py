@@ -1,3 +1,38 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel
+from PyQt5.QtGui import QPixmap, QImage
+import cv2
+
+class SimpleApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Mon Application de Traitement d’Images')
+
+        # Layout vertical pour placer les widgets
+        vbox = QVBoxLayout()
+
+        # Bouton pour capturer l'image
+        btnCapture = QPushButton('Capturer Image', self)
+        btnCapture.clicked.connect(self.captureImage)
+        vbox.addWidget(btnCapture)
+
+        # Label pour afficher l'image
+        self.imageLabel = QLabel(self)
+        vbox.addWidget(self.imageLabel)
+
+        # Bouton pour appliquer le flou
+        btnBlur = QPushButton('Appliquer Flou', self)
+        btnBlur.clicked.connect(self.applyBlur)
+        vbox.addWidget(btnBlur)
+
+        # Autres boutons et widgets peuvent être ajoutés ici...
+
+        self.setLayout(vbox)
+
+
 import cv2
 import numpy as np
 import os
@@ -186,7 +221,7 @@ def main():
     cv2.destroyAllWindows()
     
     # Afficher le montage dans une fenêtre
-    cv2.imshow('Montage Warhol', montage)
+    cv2.imshow('Montage Warhol A Enregistrer dans votre Dossier contenant le code', montage)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
@@ -195,5 +230,72 @@ def main():
     cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage)
     
     
+#if __name__ == "__main__":
+ #   main()
+ 
+ ###############################################################################################
+ #Partie interface
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel
+from PyQt5.QtGui import QIcon, QFont, QPalette, QColor, QCursor  # QCursor est importé depuis QtGui
+from PyQt5.QtCore import Qt
+
+class SimpleApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        # Palette de couleurs claires pour une apparence simple et propre
+        palette = QPalette()
+        palette.setColor(QPalette.Window, Qt.white)  # Fond blanc pour la fenêtre
+        palette.setColor(QPalette.WindowText, Qt.black)  # Texte noir
+        self.setPalette(palette)
+
+        self.setWindowTitle('VisionArtiste')
+        self.setWindowIcon(QIcon('path/to/your/icon.png'))  # Remplacez par le chemin de votre icône
+
+        vbox = QVBoxLayout()
+
+        # Ajouter un QLabel pour l'explication de l'application
+        explanationLabel = QLabel("Cette application vous permet de transformer vos images en œuvres. Sélectionnez une image et appliquez des effets artistiques uniques!", self)
+        explanationLabel.setWordWrap(True)  # Permettre le retour à la ligne automatique
+        explanationLabel.setFont(QFont('SansSerif', 10))
+        vbox.addWidget(explanationLabel)
+
+        btnStart = QPushButton('Créer un Oeuvre d\'art style Andy Warhol', self)
+
+        btnStart.clicked.connect(self.startImageProcessing)
+        btnStart.setFont(QFont('SansSerif', 10))
+        btnStart.setCursor(QCursor(Qt.PointingHandCursor))  # Change le curseur en main pointante lorsqu'il survole le bouton
+        btnStart.setStyleSheet("""
+            background-color: #4CAF50;  /* Vert */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            border-radius: 4px;
+            cursor: pointer;
+        """)
+        vbox.addWidget(btnStart)
+
+        # Ajoutez ici d'autres widgets si nécessaire...
+
+        self.setLayout(vbox)
+        self.setGeometry(300, 300, 300, 200)  # Vous pouvez ajuster la taille si nécessaire pour s'adapter au texte d'explication
+
+    def startImageProcessing(self):
+        main()  # La fonction principale pour le traitement d'image
+
+# ... Votre code pour capture_image_webcam, appliquer_palette, appliquer_flou, appliquer_svd_flou, et main ...
+
 if __name__ == "__main__":
-    main()
+    app = QApplication(sys.argv)
+    ex = SimpleApp()
+    ex.show()
+    sys.exit(app.exec_())
+
