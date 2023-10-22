@@ -10,7 +10,7 @@ from PyQt5.QtGui import QIcon, QFont, QPalette, QColor, QCursor  # QCursor est i
 from PyQt5.QtCore import Qt
 
 
-
+#blabla
 def capture_image_webcam():
     # Capture d'image depuis la webcam
     cap = cv2.VideoCapture(0)
