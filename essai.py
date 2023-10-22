@@ -4,6 +4,11 @@ import os
 import pyautogui
 import tkinter as tk
 from tkinter import ttk
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel
+from PyQt5.QtGui import QIcon, QFont, QPalette, QColor, QCursor  # QCursor est importé depuis QtGui
+from PyQt5.QtCore import Qt
+
 
 
 def capture_image_webcam():
@@ -133,23 +138,54 @@ def appliquer_svd_flou(image, k=10):
     return img_reconstruite
 
 def transformer_en_image_bd(image):
-       # Convertir l'image en niveau de gris
-    image_gris = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Appliquer un filtre de détection de contours (par exemple, Canny)
-    contours = cv2.Canny(image_gris, threshold1=30, threshold2=100)
+    # Extraire les contours en couleur
+    contours_couleur = cv2.Canny(image, 30, 400)  # Utiliser Canny pour extraire les contours colorés
 
     # Appliquer un filtre médian pour réduire le bruit sur l'image couleur
     image_lissee = cv2.medianBlur(image, 7)  # Vous pouvez ajuster la taille du noyau
 
-    # Créer une image de style bande dessinée en niveaux de gris
-    image_bd_gris = cv2.bitwise_and(image_lissee, image_lissee, mask=contours)
+    # Appliquer la quantification des couleurs pour simplifier les couleurs de l'image
+    num_colors = 8  # Vous pouvez ajuster ce nombre en fonction de vos préférences
+    quantized_image = image_lissee // (256 // num_colors) * (256 // num_colors)
 
-    # Créer une image de bande dessinée en couleur
-    image_bd_couleur = cv2.bitwise_and(image, image, mask=~contours)
+    # Créer une image de bande dessinée en couleur avec les contours en couleur
+    image_bd_couleur = cv2.bitwise_and(quantized_image, quantized_image, mask=~contours_couleur)
 
     return image_bd_couleur
 
+class SimpleApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        # Palette de couleurs claires pour une apparence simple et propre
+        palette = QPalette()
+        palette.setColor(QPalette.Window, Qt.white)  # Fond blanc pour la fenêtre
+        palette.setColor(QPalette.WindowText, Qt.black)  # Texte noir
+        self.setPalette(palette)
+
+        self.setWindowTitle('VisionArtiste')
+        self.setWindowIcon(QIcon('path/to/your/icon.png'))  # Remplacez par le chemin de votre icône
+
+        vbox = QVBoxLayout()
+
+        # Ajouter un QLabel pour l'explication de l'application
+        explanationLabel = QLabel("Cette application vous permet de transformer vos images en œuvres. Sélectionnez une image et appliquez des effets artistiques uniques!", self)
+        explanationLabel.setWordWrap(True)  # Permettre le retour à la ligne automatique
+        explanationLabel.setFont(QFont('SansSerif', 10))
+        vbox.addWidget(explanationLabel)
+
+        # Bouton pour ouvrir la fenêtre Tkinter
+        startButton = QPushButton("Start", self)
+        startButton.clicked.connect(self.openTkinterWindow)
+        vbox.addWidget(startButton)
+
+        self.setLayout(vbox)
+
+    def openTkinterWindow(self):
+        main()  # Appel de la fonction main de votre script
+        self.close()  # Fermer la fenêtre de l'interface PyQt5
 
 def main():
     # Choisir une image
