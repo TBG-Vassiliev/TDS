@@ -1,16 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import signal #pour la concolution
+from scipy import signal #pour la convolution
 import imageio.v2 as imageio #pour lire à partir d'un fichier
 
 #lecture de l'image originale
 A = np.asarray(imageio.imread('image.jpg'))
 
-#si l'image est en couleur, on l'a passe en noir & blanc
+#si l'image est en couleur, on la passe en noir & blanc
 if len(A.shape) == 3: 
     A = np.mean(A, axis=2) #la valeur du pixel noir&blanc vaut la moyenne du pixel sur les 3 couleurs
     
-#Masques utilisés pour déterminer le grdtient de l'image dnas les  directions
+#Masques utilisés pour déterminer le gradient de l'image dans les  directions
 H1 = np.array([[-1,0,1],[-5,0,5],[-1,0,1]]) # gradient horizontal 
 H2 = np.array([[-1,-5,-1],[0,0,0],[1,5,1]]) # gradient vertical
 M = np.array([[1/5,1/5,1/5],[1/5,1/5,1/5],[1/5,1/5,1/5]]) #éclaircit l'image devrait flouter en théorie
@@ -38,6 +38,7 @@ G2[G2<0]=0
 #G2=255-G2 #contours noirs sur fond blanc (=image noir et blanc en négative)
 
 #affichage des images
+print("Chargement des images...")
 plt.figure("Image originale")
 plt.imshow(A,cmap="gray")
 plt.figure("Matrice de convolution tout élément du même poids (1/5)")
@@ -49,5 +50,3 @@ plt.imshow(G1,cmap="gray")
 plt.figure("Gradient 2 (vertical)")
 plt.imshow(G2,cmap="gray")
 plt.show()
-
-
