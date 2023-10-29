@@ -228,7 +228,7 @@ def main():
     # Enregistrer l'image floutée sur le bureau
     desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'H:\\Desktop\\Projet traitement signal') 
     cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage)
-    print("Images sauvegardees dans le dossier ", desktop)
+    print("Images sauvegardees dans le dossier ", "'",os.path.join(os.environ['USERPROFILE']),"\\Desktop '")
     
     
 #if __name__ == "__main__":
@@ -264,7 +264,7 @@ class SimpleApp(QWidget):
         explanationLabel.setFont(QFont('SansSerif', 10))
         vbox.addWidget(explanationLabel)
 
-        btnStart = QPushButton('Créer un Oeuvre d\'art style Andy Warhol', self)
+        btnStart = QPushButton('Créer une oeuvre d\'art style Andy Warhol', self)
 
         btnStart.clicked.connect(self.startImageProcessing)
         btnStart.setFont(QFont('SansSerif', 10))
