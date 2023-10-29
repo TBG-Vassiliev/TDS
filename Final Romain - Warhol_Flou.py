@@ -226,8 +226,9 @@ def main():
     cv2.destroyAllWindows()
     
     # Enregistrer l'image floutée sur le bureau
-    desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'H:\Desktop\Projet traitement signal') 
+    desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'H:\\Desktop\\Projet traitement signal') 
     cv2.imwrite(os.path.join(desktop, 'montage_warhol.png'), montage)
+    print("Images sauvegardees dans le dossier ", desktop)
     
     
 #if __name__ == "__main__":
