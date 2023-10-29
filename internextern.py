@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from skimage import measure
+from skimage import measure #'pip install scikit-image', pas 'skimage', sinon ça ne marche pas
 
 # Charger l'image en niveaux de gris
 image = cv2.imread('image.jpg', 0)
