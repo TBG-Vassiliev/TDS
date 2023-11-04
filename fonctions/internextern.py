@@ -33,11 +33,12 @@ def interextern(image):
     inner_contours = [contours[regions[i][0]] for i in range(1, len(regions))]
 
     # Dessiner les contours pour afficher l'intérieur et l'extérieur
-    output = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-    cv2.drawContours(output, [outer_contour], -1, (0, 255, 0), 2)  # Contour extérieur en vert
-    cv2.drawContours(output, inner_contours, -1, (0, 0, 255), 2)  # Contours intérieurs en rouge
+    # output = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+    cv2.drawContours(image, [outer_contour], -1, (0, 255, 0), 2)  # Contour extérieur en vert
+    cv2.drawContours(image, inner_contours, -1, (0, 0, 255), 2)  # Contours intérieurs en rouge
 
     # Afficher l'image
-    cv2.imshow('Contours', output)
+    cv2.imshow('Contours', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    
