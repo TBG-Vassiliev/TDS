@@ -4,7 +4,7 @@ from scipy import signal #pour la convolution
 import imageio.v2 as imageio #pour lire à partir d'un fichier
 
 #lecture de l'image originale
-A = np.asarray(imageio.imread('image.jpg'))
+A = np.asarray(imageio.imread('../TDS/images/image.jpg')) 
 
 #si l'image est en couleur, on la passe en noir & blanc
 if len(A.shape) == 3: 

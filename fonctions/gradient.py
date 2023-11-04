@@ -3,7 +3,7 @@ import numpy as np
 
 
 #lit une image en noir et blanc
-image = cv2.imread('image.jpg', cv2.IMREAD_GRAYSCALE)
+image = cv2.imread('../TDS/images/image.jpg', cv2.IMREAD_GRAYSCALE)
 
 #filtre de Sobel
 dI_dx = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
