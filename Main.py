@@ -1,14 +1,8 @@
 # Import de nos fonctions
 
 from fonctions.essai import *
-# from fonctions.Convolution2 import *
-# from fonctions.Warhol_Flou import *
-# from fonctions.gradient import *
-# from fonctions.interface import *
 from fonctions.internextern import *
 from fonctions.marr_hildreth import *
-# from fonctions.proj import *
-# from fonctions.proj2 import *
 
 # Import des autres modules
 
