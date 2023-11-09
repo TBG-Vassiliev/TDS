@@ -152,6 +152,63 @@ def transformer_en_image_bd(image):
 
     return image_bd_couleur
 
+#produit l'image des contours avec la méthode des gradients (horizontal et vertical) en utilisant une matrice de convolution
+def appliquer_gradient_avec_Matrice_Convolution(image):
+    #si l'image est en couleur, on la passe en noir & blanc
+    if len(image.shape) == 3:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    #Masques utilisés pour déterminer le gradient de l'image dans les  directions
+    H1 = np.array([[-1,0,1],[-5,0,5],[-1,0,1]]) # gradient horizontal 
+    H2 = np.array([[-1,-5,-1],[0,0,0],[1,5,1]]) # gradient vertical
+
+    G1 = signal.convolve2d(image, H1,mode='same') # applique la convolution de image avec le noyau H1, l'image résultante est de la même taille que image
+    G1[G1>255]=255 #ajustement des valeurs de B pour que B appartienne à [0;255] comme c'est un pixel représentant une couleur
+    G1[G1<0]=0
+
+    G2 = signal.convolve2d(image, H2,mode='same') # applique la convolution de image avec le noyau H2, l'image résultante est de la même taille que image
+    G2[G2>255]=255 #ajustement des valeurs de B pour que B appartienne à [0;255] comme c'est un pixel représentant une couleur
+    G2[G2<0]=0
+
+    # Combinez les images en une seule
+    hauteur, largeur = G1.shape[:2]
+    montage = np.zeros((hauteur, largeur * 2, 1), dtype=np.uint8)  # noir&blanc
+
+    # Place les deux images côte à côte dans le montage
+    montage[:, :largeur, 0] = G1  # La première moitié est l'image A
+    montage[:, largeur:, 0] = G2  # La deuxième moitié est l'image B
+
+    # Redimensionnez le montage final si nécessaire
+    hauteur_finale = 500  # ou toute autre hauteur souhaitée
+    largeur_finale = int(hauteur_finale * (largeur * 2) / (hauteur * 1))  # pour conserver les proportions
+    montage = cv2.resize(montage, (largeur_finale, hauteur_finale))
+
+    cv2.imshow('gradient horizontal et vertical obtenus par convoluition de matrices', montage)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+#produit l'image floutée avec même poids sur tout les points mais poids = 1/5
+def appliquer_Flou_avec_Matrice_Convolution(image):
+    #si l'image est en couleur, on la passe en noir & blanc
+    if len(image.shape) == 3:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    #Masques utilisés pour la convolution, tous les pixels entourant le point ont le même poids
+    H1 = np.array([[1/50,1/50,1/50],[1/50,1/50,1/50],[1/50,1/50,1/50]]) # gradient horizontal
+
+    im_flou = signal.convolve2d(image, H1, mode='same')
+    im_flou = (im_flou - np.min(im_flou)) / (np.max(im_flou) - np.min(im_flou)) * 255  # Normalisation
+    im_flou = im_flou.astype(np.uint8)  # Conversion en entiers 8 bits
+
+    # Redimensionnez le montage final si nécessaire
+    hauteur, largeur = im_flou.shape[:2]
+    hauteur_finale = 500  # ou toute autre hauteur souhaitée        
+    im_flou = cv2.resize(im_flou, (int(hauteur_finale * largeur / hauteur), hauteur_finale))
+
+    cv2.imshow('Floutage avec matrice de convolution', im_flou)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 class SimpleApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -218,6 +275,12 @@ def main():
     def afficher_bd():
         image_bd = transformer_en_image_bd(image)
         cv2.imshow("Image de bande dessinée", image_bd)
+
+    def afficher_Gradient_MatriceConvolution():
+        grad_convolution = appliquer_gradient_avec_Matrice_Convolution(image)
+
+    def afficher_flou_MatriceConvolution():
+        grad_convolution = appliquer_Flou_avec_Matrice_Convolution(image)
 
     # Convertir l'image en niveau de gris
     image_gris = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -296,6 +359,12 @@ def main():
     btn_gradients.pack()
 
     btn_bd = ttk.Button(frame, text="Image de bande dessinée", command=afficher_bd)
+    btn_bd.pack()
+
+    btn_bd = ttk.Button(frame, text="Image gradient avec convolution", command=afficher_Gradient_MatriceConvolution)
+    btn_bd.pack()
+    
+    btn_bd = ttk.Button(frame, text="Image flou avec convolution", command=afficher_flou_MatriceConvolution)
     btn_bd.pack()
 
     btn_image_combinees = ttk.Button(frame, text="Image combinée", command=afficher_image_combinees)
