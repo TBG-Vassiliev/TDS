@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import imageio.v2 as imageio
 from scipy.ndimage import gaussian_laplace
 
-# Charger l'image
-image = imageio.imread('../TDS/images/image2.png', pilmode='L')
+# Charger l'image exemple
+image = imageio.imread('../images/image2.png')
 
 def marrhildreth(image):
     
